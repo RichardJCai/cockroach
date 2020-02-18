@@ -12,12 +12,12 @@
 
 package server
 
-import "golang.org/x/sys/unix"
-
 func setRlimitNoFile(limits *rlimit) error {
-	return unix.Setrlimit(unix.RLIMIT_NOFILE, (*unix.Rlimit)(limits))
+	//return unix.Setrlimit(unix.RLIMIT_NOFILE, (*unix.Rlimit)(limits))
+	return nil
 }
 
 func getRlimitNoFile(limits *rlimit) error {
-	return unix.Getrlimit(unix.RLIMIT_NOFILE, (*unix.Rlimit)(limits))
+	//return unix.Getrlimit(unix.RLIMIT_NOFILE, (*unix.Rlimit)(limits))
+	return nil
 }

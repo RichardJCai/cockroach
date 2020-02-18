@@ -18,7 +18,6 @@ import (
 	"net"
 	"os"
 	"os/exec"
-	"os/signal"
 	"syscall"
 )
 
@@ -45,7 +44,7 @@ func ExitStatus(err *exec.ExitError) int {
 	return err.Sys().(syscall.WaitStatus).ExitStatus()
 }
 
-const refreshSignal = syscall.SIGHUP
+//const refreshSignal = syscall.SIGHUP
 
 // RefreshSignaledChan returns a channel that will receive an os.Signal whenever
 // the process receives a "refresh" signal (currently SIGHUP). A refresh signal
@@ -57,7 +56,7 @@ const refreshSignal = syscall.SIGHUP
 // means if Windows support is important.
 func RefreshSignaledChan() <-chan os.Signal {
 	ch := make(chan os.Signal, 1)
-	signal.Notify(ch, refreshSignal)
+	//signal.Notify(ch, refreshSignal)
 	return ch
 }
 

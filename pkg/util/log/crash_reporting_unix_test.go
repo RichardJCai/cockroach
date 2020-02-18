@@ -12,15 +12,9 @@
 
 package log
 
-import (
-	"os"
-
-	"golang.org/x/sys/unix"
-)
-
 func init() {
-	safeErrorTestCases = append(safeErrorTestCases, safeErrorTestCase{
-		format: "", rs: []interface{}{os.NewSyscallError("write", unix.ENOSPC)},
-		expErr: "?:0: *os.SyscallError: write: syscall.Errno: no space left on device",
-	})
+	//safeErrorTestCases = append(safeErrorTestCases, safeErrorTestCase{
+	//	format: "", rs: []interface{}{os.NewSyscallError("write", unix.ENOSPC)},
+	//	expErr: "?:0: *os.SyscallError: write: syscall.Errno: no space left on device",
+	//})
 }

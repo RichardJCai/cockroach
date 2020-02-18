@@ -41,7 +41,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"golang.org/x/crypto/ssh/terminal"
-	"golang.org/x/sys/unix"
 )
 
 var rootCmd = &cobra.Command{
@@ -810,9 +809,9 @@ func syncCloud(quiet bool) (*cld.Cloud, error) {
 	if err != nil {
 		return nil, errors.Wrapf(err, "creating lock file %q", lockFile)
 	}
-	if err := unix.Flock(int(f.Fd()), unix.LOCK_EX); err != nil {
-		return nil, errors.Wrap(err, "acquiring lock on %q")
-	}
+	//if err := unix.Flock(int(f.Fd()), unix.LOCK_EX); err != nil {
+	//	return nil, errors.Wrap(err, "acquiring lock on %q")
+	//}
 	defer f.Close()
 	cloud, err := cld.ListCloud()
 	if err != nil {

@@ -14,8 +14,6 @@ package log
 
 import (
 	"os"
-
-	"golang.org/x/sys/unix"
 )
 
 func dupFD(fd uintptr) (uintptr, error) {
@@ -31,13 +29,16 @@ func dupFD(fd uintptr) (uintptr, error) {
 	// subprocesses that hold references to the stdin or stderr pipes, go test
 	// will hang until the subprocesses exit, rather defeating the purpose of
 	// a timeout.
-	nfd, _, errno := unix.Syscall(unix.SYS_FCNTL, fd, unix.F_DUPFD_CLOEXEC, 0)
-	if errno != 0 {
-		return 0, errno
-	}
-	return nfd, nil
+	//nfd, _, errno := unix.Syscall(unix.SYS_FCNTL, fd, unix.F_DUPFD_CLOEXEC, 0)
+	//if errno != 0 {
+	//	return 0, errno
+	//}
+	//return nfd, nil
+
+	return uintptr(0), nil
 }
 
 func redirectStderr(f *os.File) error {
-	return unix.Dup2(int(f.Fd()), unix.Stderr)
+	//return unix.Dup2(int(f.Fd()), unix.Stderr)
+	return nil
 }

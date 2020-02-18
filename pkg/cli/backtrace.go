@@ -23,7 +23,6 @@ import (
 	"github.com/cockroachdb/cockroach/pkg/build"
 	"github.com/cockroachdb/cockroach/pkg/util/log"
 	"github.com/cockroachdb/cockroach/pkg/util/stop"
-	"golang.org/x/sys/unix"
 )
 
 // Currently disabled as backtrace appears to be obscuring problems when test
@@ -78,11 +77,11 @@ func initBacktrace(logDir string, options ...stop.Option) *stop.Stopper {
 
 	// Register for traces on signal reception.
 	tracer.SetSigset(
-		unix.SIGABRT,
-		unix.SIGBUS,
-		unix.SIGFPE,
-		unix.SIGILL,
-		unix.SIGSEGV,
+	//unix.SIGABRT,
+	//unix.SIGBUS,
+	//unix.SIGFPE,
+	//unix.SIGILL,
+	//unix.SIGSEGV,
 	)
 	bcd.Register(tracer)
 

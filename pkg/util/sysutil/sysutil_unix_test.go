@@ -15,17 +15,15 @@ package sysutil
 import (
 	"testing"
 	"time"
-
-	"golang.org/x/sys/unix"
 )
 
 func TestRefreshSignaledChan(t *testing.T) {
 	ch := RefreshSignaledChan()
 
-	if err := unix.Kill(unix.Getpid(), refreshSignal); err != nil {
-		t.Error(err)
-		return
-	}
+	//if err := unix.Kill(unix.Getpid(), refreshSignal); err != nil {
+	//	t.Error(err)
+	//	return
+	//}
 
 	select {
 	case sig := <-ch:

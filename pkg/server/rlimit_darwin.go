@@ -14,8 +14,6 @@ package server
 
 import (
 	"unsafe"
-
-	"golang.org/x/sys/unix"
 )
 
 // #include <sys/types.h>
@@ -23,13 +21,14 @@ import (
 import "C"
 
 func setRlimitNoFile(limits *rlimit) error {
-	return unix.Setrlimit(unix.RLIMIT_NOFILE, (*unix.Rlimit)(limits))
+	//return unix.Setrlimit(unix.RLIMIT_NOFILE, (*unix.Rlimit)(limits))
+	return nil
 }
 
 func getRlimitNoFile(limits *rlimit) error {
-	if err := unix.Getrlimit(unix.RLIMIT_NOFILE, (*unix.Rlimit)(limits)); err != nil {
-		return err
-	}
+	//if err := unix.Getrlimit(unix.RLIMIT_NOFILE, (*unix.Rlimit)(limits)); err != nil {
+	//	return err
+	//}
 	// On macOS, the true hard open file limit is
 	// min(sysctl("kern.maxfiles"),
 	//     sysctl("kern.maxfilesperproc"),

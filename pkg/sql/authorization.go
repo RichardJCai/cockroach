@@ -308,6 +308,7 @@ func (p *planner) HasRoleOption(ctx context.Context, roleOption roleoption.Optio
 	}
 
 	var roles = tree.NewDArray(types.String)
+	roles.Append(tree.NewDString(normalizedName))
 	for role := range memberOf {
 		err := roles.Append(tree.NewDString(role))
 		if err != nil {
@@ -334,5 +335,5 @@ func (p *planner) HasRoleOption(ctx context.Context, roleOption roleoption.Optio
 
 	// User is not a member of a role that has CREATEROLE privilege.
 	return pgerror.Newf(pgcode.InsufficientPrivilege,
-		"user %s does not have CREATEROLE privilege", user)
+		"user %s does not have %s privilege", user, roleOption.String())
 }

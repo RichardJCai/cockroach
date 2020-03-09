@@ -153,6 +153,9 @@ func TestVerifyPassword(t *testing.T) {
 				}
 			}
 
+			if err != nil {
+
+			}
 			if valid && !expired != tc.shouldAuthenticate {
 				t.Errorf(
 					"credentials %s/%s valid = %t, wanted %t",

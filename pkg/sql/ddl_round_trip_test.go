@@ -13,6 +13,7 @@ package sql_test
 import (
 	"context"
 	"fmt"
+	"strings"
 	"sync"
 	"testing"
 
@@ -46,8 +47,9 @@ import (
 //    operations that are made for the statement.
 
 type countWithTrace struct {
-	count int
-	trace string
+	count      int
+	trace      string
+	operations []string
 }
 
 func TestDDLAnalysis(t *testing.T) {
@@ -65,8 +67,9 @@ func TestDDLAnalysis(t *testing.T) {
 				sp.Finish()
 				trace := tracing.GetRecording(sp)
 				tc := countWithTrace{
-					count: countKvBatchRequestsInRecording(trace),
-					trace: trace.String(),
+					count:      countKvBatchRequestsInRecording(trace),
+					trace:      trace.String(),
+					operations: extractKvBatchRequestsInRecording(trace),
 				}
 				stmtToKvBatchRequests.Store(stmt, tc)
 			}
@@ -132,7 +135,8 @@ func TestDDLAnalysis(t *testing.T) {
 					)
 				}
 
-				return fmt.Sprintf("%d", count)
+				//return fmt.Sprintf("%d", count)
+				return strings.Join(tc.operations, "")
 
 			default:
 				td.Fatalf(t, "unknown command %s", td.Cmd)
@@ -173,4 +177,37 @@ func countKvBatchRequestsInSpan(r tracing.Recording, sp tracing.RecordedSpan) in
 	}
 
 	return count
+}
+
+// count the number of KvBatchRequests inside a recording, this is done by
+// counting each "txn coordinator send" operation.
+func extractKvBatchRequestsInRecording(r tracing.Recording) []string {
+	root := r[0]
+
+	// Find the topmost "flow" span to start traversing from.
+	for _, sp := range r {
+		if sp.ParentSpanID == root.SpanID && sp.Operation == "flow" {
+			return extractKvBatchRequestsInSpan(r, sp)
+		}
+	}
+
+	return extractKvBatchRequestsInSpan(r, root)
+}
+
+func extractKvBatchRequestsInSpan(r tracing.Recording, sp tracing.RecordedSpan) []string {
+	var operations []string
+	// Count the number of OpTxnCoordSender operations while traversing the
+	// tree of spans.
+	if sp.Operation == kvcoord.OpTxnCoordSender {
+		operations = append(operations, sp.String())
+	}
+
+	for _, osp := range r {
+		if osp.ParentSpanID != sp.SpanID {
+			continue
+		}
+		operations = append(extractKvBatchRequestsInSpan(r, osp), operations...)
+	}
+
+	return operations
 }

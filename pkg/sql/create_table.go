@@ -1388,12 +1388,11 @@ func MakeTableDesc(
 				return desc, err
 			}
 
-			expr, err = schemaexpr.DequalifyColumnRefs(ctx, sourceInfo, expr)
+			deqExpr, err := schemaexpr.DequalifyColumnRefs(ctx, sourceInfo, expr)
 			if err != nil {
 				return desc, err
 			}
-			serialized := tree.Serialize(expr)
-			col.ComputeExpr = &serialized
+			col.ComputeExpr = &deqExpr
 		}
 	}
 
@@ -1489,9 +1488,7 @@ func MakeTableDesc(
 				if err != nil {
 					return desc, err
 				}
-
-				// Store the serialized predicate expression in the IndexDescriptor.
-				idx.Predicate = tree.Serialize(expr)
+				idx.Predicate = expr
 			}
 
 			if err := desc.AddIndex(idx, false); err != nil {
@@ -1536,9 +1533,7 @@ func MakeTableDesc(
 				if err != nil {
 					return desc, err
 				}
-
-				// Store the serialized predicate expression in the IndexDescriptor.
-				idx.Predicate = tree.Serialize(expr)
+				idx.Predicate = expr
 			}
 			if err := desc.AddIndex(idx, d.PrimaryKey); err != nil {
 				return desc, err

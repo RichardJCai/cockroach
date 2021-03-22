@@ -843,6 +843,7 @@ type clusterSpec struct {
 	Geo         bool
 	Lifetime    time.Duration
 	ReusePolicy clusterReusePolicy
+	Secure bool
 }
 
 func makeClusterSpec(nodeCount int, opts ...createOption) clusterSpec {
@@ -1298,6 +1299,7 @@ func (f *clusterFactory) newCluster(
 			l.PrintfCtx(ctx, "Retrying cluster creation (attempt #%d)", i+1)
 		}
 		err = execCmd(ctx, l, sargs...)
+		println(sargs)
 		if err == nil {
 			success = true
 			break
@@ -2175,6 +2177,7 @@ func (c *cluster) StartE(ctx context.Context, opts ...option) error {
 			}
 		}
 	}
+	println(args)
 	return execCmd(ctx, c.l, args...)
 }
 

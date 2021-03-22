@@ -12,6 +12,7 @@ package connectionlatency
 
 import (
 	"context"
+	"strings"
 
 	"github.com/cockroachdb/cockroach/pkg/util/timeutil"
 	"github.com/cockroachdb/cockroach/pkg/workload"
@@ -56,6 +57,8 @@ func (connectionLatency) Tables() []workload.Table {
 func (c *connectionLatency) Ops(
 	ctx context.Context, urls []string, reg *histogram.Registry,
 ) (workload.QueryLoad, error) {
+	println("urls:")
+	println(urls)
 	ql := workload.QueryLoad{}
 	if len(urls) != 1 {
 		return workload.QueryLoad{}, errors.New("expected urls to be length 1")
@@ -75,7 +78,11 @@ type connectionOp struct {
 
 func (o *connectionOp) run(ctx context.Context) error {
 	start := timeutil.Now()
-	conn, err := pgx.Connect(ctx, o.url)
+	println(o.url)
+	x := strings.Replace(o.url, "root","testuser", -1)
+	newUrl := strings.Replace(x, "verify-full", "require", -1)
+	println(newUrl)
+	conn, err := pgx.Connect(ctx, newUrl)
 	if err != nil {
 		return err
 	}
@@ -89,5 +96,27 @@ func (o *connectionOp) run(ctx context.Context) error {
 	// Record the time it takes to do a select after connecting for reference.
 	elapsed = timeutil.Since(start)
 	o.hists.Get(`select`).Record(elapsed)
+
+	//var nodeId int
+	//var sessionId string
+	//var user string
+	//var clientAddress string
+
+	var applicationName string
+	row := conn.QueryRow(ctx, "SELECT user FROM crdb_internal.cluster_sessions")
+	err = row.Scan(&applicationName)
+	if err != nil {
+		return err
+	}
+	//println("stuff:")
+	println(applicationName)
+
+	//var n int
+	//if err := conn.QueryRow(ctx, "SELECT 1").Scan(&n); err != nil {
+	//	return err
+	//}
+	//if n != 1 {
+	//	return errors.Errorf("expected 1 got %d", n)
+	//}
 	return nil
 }

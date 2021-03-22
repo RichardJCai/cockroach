@@ -153,7 +153,9 @@ func init() {
 func CmdHelper(
 	gen workload.Generator, fn func(gen workload.Generator, urls []string, dbName string) error,
 ) func(*cobra.Command, []string) {
-	const crdbDefaultURL = `postgres://root@localhost:26257?sslmode=disable`
+	//const crdbDefaultURL = `postgres://root@localhost:26257?sslmode=disable`
+	const crdbDefaultURL = `postgres://root@localhost:26257` + "?sslcert=certs%2Fclient.root.crt&sslkey=certs%2Fclient.root.key&" +
+	"sslrootcert=certs%2Fca.crt&sslmode=verify-full"
 
 	return HandleErrs(func(cmd *cobra.Command, args []string) error {
 		// Apply the logging configuration if none was set already.

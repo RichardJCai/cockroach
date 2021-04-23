@@ -318,6 +318,9 @@ func runRR(r io.Reader, railroadJar string) ([]byte, error) {
 
 var specs = []stmtSpec{
 	{
+		name: "abort_stmt",
+	},
+	{
 		name:   "add_column",
 		stmt:   "alter_onetable_stmt",
 		inline: []string{"alter_table_cmds", "alter_table_cmd", "column_def", "col_qual_list"},
@@ -351,6 +354,30 @@ var specs = []stmtSpec{
 		unlink:  []string{"table_name"},
 	},
 	{
+		name: "alter_database_add_region_stmt",
+	},
+	{
+		name: "alter_database_drop_region_stmt",
+	},
+	{
+		name: "alter_database_primary_region_stmt",
+	},
+	{
+		name: "alter_database_stmt",
+	},
+	{
+		name: "alter_database_owner",
+	},
+	{
+		name: "alter_database_survival_goal_stmt",
+	},
+	{
+		name: "alter_database_to_schema_stmt",
+	},
+	{
+		name: "alter_ddl_stmt",
+	},
+	{
 		name:   "alter_primary_key",
 		stmt:   "alter_onetable_stmt",
 		inline: []string{"alter_table_cmds", "alter_table_cmd", "opt_hash_sharded"},
@@ -365,6 +392,9 @@ var specs = []stmtSpec{
 		unlink: []string{"table_name", "n_buckets"},
 	},
 	{
+		name: "alter_range_stmt",
+	},
+	{
 		name:   "alter_role_stmt",
 		inline: []string{"role_or_group_or_user", "opt_role_options"},
 		replace: map[string]string{
@@ -375,11 +405,32 @@ var specs = []stmtSpec{
 		unlink: []string{"name", "password"},
 	},
 	{
+		name: "alter_scatter_index_stmt",
+	},
+	{
+		name: "alter_scatter_stmt",
+	},
+	{
+		name: "alter_schema_stmt",
+	},
+	{
+		name: "alter_sequence_stmt",
+	},
+	{
+		name: "alter_stmt",
+	},
+	{
 		name:    "alter_sequence_options_stmt",
 		inline:  []string{"sequence_option_list", "sequence_option_elem"},
 		replace: map[string]string{"relation_expr": "sequence_name", "signed_iconst64": "integer", "column_path": "column_name"},
 		unlink:  []string{"integer", "sequence_name", "column_path"},
 		nosplit: true,
+	},
+	{
+		name: "alter_sequence_owner_stmt",
+	},
+	{
+		name: "alter_sequence_set_schema_stmt",
 	},
 	{
 		name:   "alter_table",
@@ -393,6 +444,9 @@ var specs = []stmtSpec{
 		nosplit: true,
 	},
 	{
+		name: "alter_table_locality_stmt",
+	},
+	{
 		name:    "alter_type",
 		stmt:    "alter_type_stmt",
 		inline:  []string{"opt_add_val_placement"},
@@ -404,6 +458,15 @@ var specs = []stmtSpec{
 		stmt:    "alter_rename_view_stmt",
 		inline:  []string{"opt_transaction"},
 		replace: map[string]string{"relation_expr": "view_name", "qualified_name": "name"}, unlink: []string{"view_name", "name"},
+	},
+	{
+		name: "alter_view_owner_stmt",
+	},
+	{
+		name: "alter_view_set_schema_stmt",
+	},
+	{
+		name: "alter_view_stmt",
 	},
 	{
 		name:    "alter_zone_database_stmt",
@@ -455,6 +518,9 @@ var specs = []stmtSpec{
 	},
 	{
 		name: "begin_transaction",
+	},
+	{
+		name: "begin",
 		stmt: "begin_stmt",
 		inline: []string{
 			"opt_transaction",
@@ -484,6 +550,9 @@ var specs = []stmtSpec{
 		stmt: "stmt_block",
 		replace: map[string]string{"	stmt": "	'CREATE' 'TABLE' table_name '(' ( column_def ( ',' column_def )* ) ( 'CONSTRAINT' constraint_name | ) 'CHECK' '(' check_expr ')' ( table_constraints | ) ')'"},
 		unlink: []string{"table_name", "check_expr", "table_constraints"},
+	},
+	{
+		name: "close_cursor_stmt",
 	},
 	{
 		name:   "column_def",
@@ -548,10 +617,19 @@ var specs = []stmtSpec{
 		unlink:  []string{"session_id"},
 	},
 	{
+		name: "cancel_stmt",
+	},
+	{
 		name:    "create_database_stmt",
 		inline:  []string{"opt_encoding_clause", "opt_connection_limit", "opt_equal"},
 		replace: map[string]string{"'SCONST'": "encoding"},
 		unlink:  []string{"name", "encoding"},
+	},
+	{
+		name: "create_ddl_stmt",
+	},
+	{
+		name: "create_extension_stmt",
 	},
 	{
 		name:   "create_changefeed_stmt",
@@ -611,13 +689,16 @@ var specs = []stmtSpec{
 		},
 		nosplit: true,
 	},
+	//{
+	//	name:   "create_schedule_for_backup_stmt",
+	//	inline: []string{"opt_description", "string_or_placeholder_opt_list", "string_or_placeholder_list", "opt_with_backup_options", "cron_expr", "opt_full_backup_clause", "opt_with_schedule_options", "opt_backup_targets"},
+	//	replace: map[string]string{
+	//		"string_or_placeholder 'FOR'":       "label 'FOR'",
+	//		"'RECURRING' sconst_or_placeholder": "'RECURRING' cronexpr",
+	//		"targets":                           "( | ( 'TABLE' | ) table_pattern ( ( ',' table_pattern ) )* | 'DATABASE' database_name ( ( ',' database_name ) )* )"},
+	//},
 	{
-		name:   "create_schedule_for_backup_stmt",
-		inline: []string{"opt_description", "string_or_placeholder_opt_list", "string_or_placeholder_list", "opt_with_backup_options", "cron_expr", "opt_full_backup_clause", "opt_with_schedule_options", "opt_backup_targets"},
-		replace: map[string]string{
-			"string_or_placeholder 'FOR'":       "label 'FOR'",
-			"'RECURRING' sconst_or_placeholder": "'RECURRING' cronexpr",
-			"targets":                           "( | ( 'TABLE' | ) table_pattern ( ( ',' table_pattern ) )* | 'DATABASE' database_name ( ( ',' database_name ) )* )"},
+		name: "create_schema_stmt",
 	},
 	{
 		name:    "create_sequence_stmt",
@@ -630,6 +711,9 @@ var specs = []stmtSpec{
 		name:    "create_stats_stmt",
 		replace: map[string]string{"name_list": "column_name"},
 		unlink:  []string{"statistics_name", "column_name"},
+	},
+	{
+		name: "create_stmt",
 	},
 	{
 		name:   "create_table_as_stmt",
@@ -647,6 +731,9 @@ var specs = []stmtSpec{
 	{
 		name:   "create_view_stmt",
 		inline: []string{"opt_column_list"},
+	},
+	{
+		name: "deallocate_stmt",
 	},
 	{
 		name:   "create_role_stmt",
@@ -673,6 +760,9 @@ var specs = []stmtSpec{
 		},
 		unlink:  []string{"count"},
 		nosplit: true,
+	},
+	{
+		name: "discard_stmt",
 	},
 	{
 		name:   "with_clause",
@@ -717,6 +807,9 @@ var specs = []stmtSpec{
 		match:  []*regexp.Regexp{regexp.MustCompile("'DROP' 'DATABASE'")},
 	},
 	{
+		name: "drop_ddl_stmt",
+	},
+	{
 		name:   "drop_index",
 		stmt:   "drop_index_stmt",
 		match:  []*regexp.Regexp{regexp.MustCompile("'DROP' 'INDEX'")},
@@ -727,9 +820,18 @@ var specs = []stmtSpec{
 		replace: map[string]string{"standalone_index_name": "index_name"},
 	},
 	{
+		name: "drop_owned_by_stmt",
+	},
+	{
 		name:    "drop_role_stmt",
 		inline:  []string{"role_or_group_or_user"},
 		replace: map[string]string{"string_or_placeholder_list": "name"},
+	},
+	{
+		name: "drop_schedule_stmt",
+	},
+	{
+		name: "drop_schema_stmt",
 	},
 	{
 		name:   "drop_sequence_stmt",
@@ -759,6 +861,9 @@ var specs = []stmtSpec{
 		nosplit: true,
 	},
 	{
+		name: "execute_stmt",
+	},
+	{
 		name:   "experimental_audit",
 		stmt:   "alter_onetable_stmt",
 		inline: []string{"audit_mode", "alter_table_cmd", "alter_table_cmds"},
@@ -772,6 +877,9 @@ var specs = []stmtSpec{
 		},
 	},
 	{
+		name: "alter_table_owner_stmt",
+	},
+	{
 		name:    "alter_table_partition_by",
 		stmt:    "alter_onetable_stmt",
 		inline:  []string{"alter_table_cmds", "alter_table_cmd", "partition_by"},
@@ -783,10 +891,22 @@ var specs = []stmtSpec{
 		match: []*regexp.Regexp{regexp.MustCompile("relation_expr 'PARTITION")},
 	},
 	{
+		name: "alter_table_set_schema_stmt",
+	},
+	{
+		name: "alter_table_stmt",
+	},
+	{
 		name:    "alter_index_partition_by",
 		stmt:    "alter_oneindex_stmt",
 		inline:  []string{"alter_index_cmds", "alter_index_cmd", "partition_by", "table_index_name"},
 		replace: map[string]string{"standalone_index_name": "index_name"},
+	},
+	{
+		name: "alter_index_stmt",
+	},
+	{
+		name: "alter_partition_stmt",
 	},
 	{
 		name:    "create_table_partition_by",
@@ -806,6 +926,9 @@ var specs = []stmtSpec{
 			regexp.MustCompile("'ANALYZE'"),
 			regexp.MustCompile("'ANALYSE'"),
 		},
+	},
+	{
+		name: "explainable_stmt",
 	},
 	{
 		name:   "explain_analyze_stmt",
@@ -869,6 +992,9 @@ var specs = []stmtSpec{
 		unlink: []string{"table_name", "column_name", "parent_table", "table_constraints"},
 	},
 	{
+		name: "generic_set",
+	},
+	{
 		name:    "index_def",
 		inline:  []string{"opt_storing", "storing", "index_params", "opt_name", "opt_hash_sharded"},
 		replace: map[string]string{"a_expr": "n_buckets"},
@@ -918,6 +1044,9 @@ var specs = []stmtSpec{
 			"string_or_placeholder": "file_location",
 		},
 		unlink: []string{"file_location"},
+	},
+	{
+		name: "insert_rest",
 	},
 	{
 		name:    "insert_stmt",
@@ -973,6 +1102,12 @@ var specs = []stmtSpec{
 		unlink:  []string{"schedule_id"},
 	},
 	{
+		name: "prepare_stmt",
+	},
+	{
+		name: "preparable_stmt",
+	},
+	{
 		name: "primary_key_column_level",
 		stmt: "stmt_block",
 		replace: map[string]string{"	stmt": "	'CREATE' 'TABLE' table_name '(' column_name column_type 'PRIMARY KEY' ( column_constraints | ) ( ',' ( column_def ( ',' column_def )* ) | ) ( table_constraints | ) ')' ')'"},
@@ -983,6 +1118,9 @@ var specs = []stmtSpec{
 		stmt: "stmt_block",
 		replace: map[string]string{"	stmt": "	'CREATE' 'TABLE' table_name '(' ( column_def ( ',' column_def )* ) ( 'CONSTRAINT' name | ) 'PRIMARY KEY' '(' ( column_name ( ',' column_name )* ) ')' ( table_constraints | ) ')'"},
 		unlink: []string{"table_name", "column_name", "table_constraints"},
+	},
+	{
+		name: "reassign_owned_by_stmt",
 	},
 	{
 		name: "refresh_materialized_views",
@@ -1097,6 +1235,9 @@ var specs = []stmtSpec{
 		replace: map[string]string{"'TRANSACTION'": "", "'TO'": "'TO' 'SAVEPOINT'"},
 	},
 	{
+		name: "row_source_extension_stmt",
+	},
+	{
 		name:   "limit_clause",
 		inline: []string{"row_or_rows", "first_or_next"},
 		replace: map[string]string{
@@ -1108,7 +1249,19 @@ var specs = []stmtSpec{
 		name:   "offset_clause",
 		inline: []string{"row_or_rows"},
 	},
-	{name: "savepoint_stmt", inline: []string{"savepoint_name"}},
+	{
+		name:   "savepoint_stmt",
+		inline: []string{"savepoint_name"},
+	},
+	{
+		name: "scrub_database_stmt",
+	},
+	{
+		name: "scrub_stmt",
+	},
+	{
+		name: "scrub_table_stmt",
+	},
 	{
 		name: "select_stmt",
 		inline: []string{
@@ -1172,6 +1325,9 @@ var specs = []stmtSpec{
 		nosplit: true,
 	},
 	{
+		name: "transaction_stmt",
+	},
+	{
 		name:   "set_var",
 		stmt:   "preparable_set_stmt",
 		inline: []string{"set_session_stmt", "set_rest_more", "generic_set", "var_list", "to_or_eq"},
@@ -1195,6 +1351,21 @@ var specs = []stmtSpec{
 		match: []*regexp.Regexp{
 			regexp.MustCompile("'SET' 'CLUSTER'"),
 		},
+	},
+	{
+		name: "set_csetting_stmt",
+	},
+	{
+		name: "set_exprs_internal",
+	},
+	{
+		name: "set_rest_more",
+	},
+	{
+		name: "set_session_stmt",
+	},
+	{
+		name: "set_transaction_stmt",
 	},
 	{
 		name: "set_transaction",
@@ -1236,6 +1407,9 @@ var specs = []stmtSpec{
 		match:   []*regexp.Regexp{regexp.MustCompile("'SHOW' 'CONSTRAINTS'")},
 		replace: map[string]string{"var_name": "table_name"},
 		unlink:  []string{"table_name"},
+	},
+	{
+		name: "show_constraints_stmt",
 	},
 	{
 		name:    "show_create_stmt",
@@ -1295,7 +1469,9 @@ var specs = []stmtSpec{
 		match: []*regexp.Regexp{regexp.MustCompile("'SHOW' 'KEYS'")},
 	},
 	{
-		name:    "show_locality",
+		name: "show_locality_stmt",
+	},
+	{
 		stmt:    "show_roles_stmt",
 		replace: map[string]string{"'ROLES'": "'LOCALITY'"},
 	},
@@ -1311,11 +1487,17 @@ var specs = []stmtSpec{
 		name: "show_roles_stmt",
 	},
 	{
+		name: "show_types_stmt",
+	},
+	{
 		name: "show_users_stmt",
 	},
 	{
 		name: "show_ranges_stmt",
 		stmt: "show_ranges_stmt",
+	},
+	{
+		name: "show_regions_stmt",
 	},
 	{
 		name:    "show_range_for_row_stmt",
@@ -1338,6 +1520,9 @@ var specs = []stmtSpec{
 		stmt: "show_sequences_stmt",
 	},
 	{
+		name: "show_session_stmt",
+	},
+	{
 		name:   "show_sessions",
 		stmt:   "show_sessions_stmt",
 		inline: []string{"opt_cluster"},
@@ -1345,6 +1530,9 @@ var specs = []stmtSpec{
 	{
 		name: "show_stats",
 		stmt: "show_stats_stmt",
+	},
+	{
+		name: "show_survival_goal_stmt",
 	},
 	{
 		name:    "show_tables",
@@ -1363,6 +1551,9 @@ var specs = []stmtSpec{
 		name:  "show_transaction",
 		stmt:  "show_stmt",
 		match: []*regexp.Regexp{regexp.MustCompile("'SHOW' 'TRANSACTION'")},
+	},
+	{
+		name: "show_transactions_stmt",
 	},
 	{
 		name:  "show_savepoint_status",
@@ -1387,6 +1578,9 @@ var specs = []stmtSpec{
 		name:   "split_table_at",
 		stmt:   "alter_split_stmt",
 		unlink: []string{"table_name"},
+	},
+	{
+		name: "stmt",
 	},
 	{
 		name:   "table_constraint",
@@ -1473,6 +1667,9 @@ var specs = []stmtSpec{
 		inline:  []string{"insert_target", "insert_rest", "returning_clause", "opt_with_clause", "with_clause", "cte_list", "insert_column_list", "insert_column_item"},
 		unlink:  []string{"select_stmt"},
 		nosplit: true,
+	},
+	{
+		name: "use_stmt",
 	},
 	{
 		name:    "validate_constraint",
